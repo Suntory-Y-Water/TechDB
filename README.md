@@ -23,5 +23,9 @@ docker-compose build
 ```
 docker-compose up chatbot
 ```
+下記にアクセス
+http://localhost:8000/docs
+
+
 終了時は
 CTRL+C 辺りを入力
