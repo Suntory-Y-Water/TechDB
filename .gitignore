@@ -1,0 +1,10 @@
+.venv
+.dockervenv
+
+#chatbot
+chatbot/__pycache__
+.venv
+api/__pycache__
+poetry.lock
+
+#scraping
