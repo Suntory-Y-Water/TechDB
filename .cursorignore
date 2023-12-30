@@ -1,0 +1,10 @@
+.venv
+.dockervenv
+README.md
+
+#chatbot
+chatbot/__pycache__
+chatbot/README.md
+
+#scraping
+scraping
