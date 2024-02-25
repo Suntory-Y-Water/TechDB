@@ -10,7 +10,7 @@ const CountUp = () => {
   };
   return (
     <div>
-      <Button onClick={hendleClick}>hey! shadcn!</Button>
+      <Button onClick={hendleClick}>Count Up!</Button>
       <p className='py-2'>現在のカウント: {count}</p>
     </div>
   );
