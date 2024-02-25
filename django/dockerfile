@@ -1,0 +1,21 @@
+# Python 3.11のイメージをベースとする
+FROM python:3.11-buster
+
+# Pythonの出力をバッファリングしないように設定
+ENV PYTHONUNBUFFERED=1
+
+# 作業ディレクトリを設定
+WORKDIR /src
+
+# pipを使って依存関係管理ツールをインストール（ここではpoetryを使用）
+RUN pip install poetry
+
+# poetryの定義ファイルをコピー（存在する場合）
+COPY pyproject.toml* poetry.lock* ./
+
+# poetryを使って依存関係をインストール（pyproject.tomlが存在する場合）
+RUN poetry config virtualenvs.in-project true
+RUN if [ -f pyproject.toml ]; then poetry install --no-root; fi
+
+# Djangoアプリケーションを実行するためのコマンド
+ENTRYPOINT ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
