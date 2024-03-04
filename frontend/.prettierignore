@@ -1,0 +1,21 @@
+# 依存関係
+node_modules/
+
+# ビルド出力
+/dist/
+/build/
+
+# 設定ファイル
+.env
+.env.local
+.env.development
+.env.production
+
+# キャッシュ & ログ
+.cache/
+/logs/
+/temp/
+
+# その他
+*.log
+/coverage/
