@@ -10,6 +10,10 @@ const nextConfig = {
       poll: 1000,
       aggregateTimeout: 300,
     };
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
     return config;
   },
 };
