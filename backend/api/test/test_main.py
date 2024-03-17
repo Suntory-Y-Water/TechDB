@@ -2,41 +2,21 @@ import pytest
 import pytest_asyncio
 import starlette.status
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from api.db import get_test_db, Base, ASYNC_TEST_DB_URL
+from api.db import get_db, get_test_db, Base, async_test_engine
 from api.main import app
+
 
 @pytest_asyncio.fixture(autouse=True)
 async def setup_and_teardown():
-    # テスト用のengineとsessionを作成
-    async_test_engine = create_async_engine(ASYNC_TEST_DB_URL)
-    async_test_session = sessionmaker(autocommit=False, autoflush=False, bind=async_test_engine, class_=AsyncSession)
-
-    # テスト前にテーブルを削除し、再作成する
+    app.dependency_overrides[get_db] = get_test_db
     async with async_test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
-
-    # テスト用のDI関数を定義
-    async def get_test_db_with_session():
-        async with async_test_session() as session:
-            yield session
-
-    # DIを使ってFastAPIのDBの向き先をテスト用DBに変更
-    app.dependency_overrides[get_test_db] = get_test_db_with_session
-
     yield
-
-    # テスト後にテーブルを削除する
     async with async_test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-
-    # テスト終了後にDIを解除
-    app.dependency_overrides.pop(get_test_db)
-
-    # テスト用のengineとsessionを閉じる
+    app.dependency_overrides.clear()
     await async_test_engine.dispose()
+
 
 @pytest_asyncio.fixture
 async def async_client() -> AsyncClient:
@@ -46,8 +26,57 @@ async def async_client() -> AsyncClient:
 
 
 @pytest.mark.asyncio
-async def test_create_tags(async_client: AsyncClient):
+async def test_create_and_read_tags(async_client: AsyncClient):
     # タグの作成
     tags = [{"tag_id": "Python"}, {"tag_id": "FastAPI"}]
     response = await async_client.post("/api/tags", json={"tags": tags})
     assert response.status_code == starlette.status.HTTP_201_CREATED
+    response = await async_client.get("/api/tag")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    data = response.json()
+    assert len(data["tags"]) == 2
+    assert {"tag_id": "Python"} in data["tags"]
+    assert {"tag_id": "FastAPI"} in data["tags"]
+
+
+@pytest.mark.asyncio
+async def test_create_and_read_articles(async_client: AsyncClient):
+    # 前段階としてタグを作成しておく
+    tags = [{"tag_id": "Python"}, {"tag_id": "FastAPI"}]
+    response = await async_client.post("/api/tags", json={"tags": tags})
+    assert response.status_code == starlette.status.HTTP_201_CREATED
+
+    # 記事の作成
+    articles = [
+        {
+            "article_id": "8524fe3a22a2faa47b7a",
+            "title": "牛乳を1つ買ってきてください。卵があったら6つ買ってきてください。のような仕様書",
+            "likes_count": 0,
+            "stocks_count": 0,
+            "read_time": 0,
+            "url": "https://qiita.com/SZR/items/8524fe3a22a2faa47b7a",
+            "source": "1",
+            "ogp_image_url": "https://example.com/ogp_image.png",
+            "created_at": "2024-01-15T13:07:45.208Z",
+            "tags": [{"tag_id": "Python"}, {"tag_id": "FastAPI"}],
+        },
+        {
+            "article_id": "123456",
+            "title": "牛乳を1つ買ってきてください。卵があったら6つ買ってきてください。のような仕様書",
+            "likes_count": 0,
+            "stocks_count": 0,
+            "read_time": 0,
+            "url": "https://qiita.com/SZR/items/123456",
+            "source": "1",
+            "ogp_image_url": "https://example.com/ogp_image.png",
+            "created_at": "2024-01-15T13:07:45.208Z",
+            "tags": [{"tag_id": "Python"}, {"tag_id": "FastAPI"}],
+        },
+    ]
+    response = await async_client.post("/api/articles", json={"articles": articles})
+    assert response.status_code == starlette.status.HTTP_201_CREATED
+    response = await async_client.get("/api/articles")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    data = response.json()
+    # レスポンスのデータ構造の確認
+    assert len(data["articles"]) == 2

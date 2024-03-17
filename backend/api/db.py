@@ -12,12 +12,16 @@ async_test_session = sessionmaker(autocommit=False, autoflush=False, bind=async_
 
 Base = declarative_base()
 
+
 # DI用の関数を定義
 async def get_db():
     async with async_session() as session:
         yield session
 
-# テスト用のDI関数
+
 async def get_test_db():
     async with async_test_session() as session:
-        yield session
+        try:
+            yield session
+        finally:
+            await session.close()
