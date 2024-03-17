@@ -1,8 +1,12 @@
 from sqlalchemy import create_engine
 
-from api.models.blog import Base
+from api.db import Base
 
-DB_URL = "mysql+pymysql://root@db:3306/blog?charset=utf8"
+from api.models.article import Article
+from api.models.tag import Tag
+from api.models.article_tags import article_tags_table
+
+DB_URL = "mysql+pymysql://root@db:3306/tech-db?charset=utf8"
 engine = create_engine(DB_URL, echo=True)
 
 

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from api.router import blog
+from api.router import tag
+from api.router import article
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -12,4 +13,5 @@ app.add_middleware(
     allow_methods=["*"],  # すべてのHTTPメソッドを許可
     allow_headers=["*"],  # すべてのヘッダーを許可
 )
-app.include_router(blog.router)
+app.include_router(tag.router)
+app.include_router(article.router)
