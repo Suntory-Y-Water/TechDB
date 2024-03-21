@@ -1,0 +1,10 @@
+{
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    },
+    "black-formatter.args": [
+        "--line-length=120"
+    ]
+}

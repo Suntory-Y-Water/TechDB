@@ -22,7 +22,7 @@ async def create_articles_with_tags(db: AsyncSession, articles_create: List[arti
                 tag = await db.scalar(select(tag_model.Tag).where(tag_model.Tag.tag_id == tag_data.tag_id))
                 if tag is None:
                     tag = tag_model.Tag(tag_id=tag_data.tag_id)
-                    await db.add(tag)
+                    db.add(tag)
                 tags.append(tag)
 
             article_data = article_create.model_dump(exclude={"tags"})

@@ -11,6 +11,8 @@ fastapi = "^0.109.0"
 uvicorn = {extras = ["standard"], version = "^0.25.0"}
 sqlalchemy = "^2.0.25"
 aiomysql = "^0.2.0"
+requests = "^2.31.0"
+emoji = "^2.10.1"
 
 
 [tool.poetry.group.dev.dependencies]
