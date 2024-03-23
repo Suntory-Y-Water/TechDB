@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, Response, status
-from fastapi import HTTPException
-
-from api.db import get_db
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends
+
 import api.cruds.tag as tag_crud
 import api.schemas.tag as tag_schema
+from api.db import get_db
 
 router = APIRouter()
 

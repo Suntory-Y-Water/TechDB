@@ -1,7 +1,7 @@
 .venv
 dockervenv
 .dockervenv
-.vscode
 **/__pycache__
 poetry.lock
 .pytest_cache
+.env
