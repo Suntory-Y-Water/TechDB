@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from api.router import tag
-from api.router import article
 from fastapi.middleware.cors import CORSMiddleware
+
+from api.router import article, tag
 
 app = FastAPI()
 

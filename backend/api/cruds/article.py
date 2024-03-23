@@ -1,16 +1,16 @@
+from datetime import datetime
 from typing import List
-from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from zoneinfo import ZoneInfo
+
 from sqlalchemy.dialects.mysql import insert as mysql_insert
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 import api.models.article as article_model
 import api.models.tag as tag_model
-import api.schemas.tag as tag_schema
 import api.schemas.article as article_schema
-
-from datetime import datetime
-from zoneinfo import ZoneInfo
+import api.schemas.tag as tag_schema
 
 
 async def create_articles_with_tags(db: AsyncSession, articles_create: List[article_schema.ArticleCreate]) -> None:

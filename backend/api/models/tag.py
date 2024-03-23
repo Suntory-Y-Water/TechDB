@@ -1,12 +1,13 @@
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, DateTime
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
+from sqlalchemy import Column, DateTime, String
+from sqlalchemy.orm import relationship
+
+from api.db import Base
 from api.models.article import Article
 from api.models.article_tags import article_tags_table
 
-
-from api.db import Base
 
 class Tag(Base):
     __tablename__ = "tags"

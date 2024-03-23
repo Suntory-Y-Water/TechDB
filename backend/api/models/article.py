@@ -1,9 +1,10 @@
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, DateTime, Integer, UnicodeText
 from datetime import datetime
-from api.models.article_tags import article_tags_table
+
+from sqlalchemy import Column, DateTime, Integer, String, UnicodeText
+from sqlalchemy.orm import relationship
 
 from api.db import Base
+from api.models.article_tags import article_tags_table
 
 
 class Article(Base):
