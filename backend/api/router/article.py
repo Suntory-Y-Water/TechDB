@@ -38,8 +38,8 @@ async def get_articles(db: AsyncSession = Depends(get_db)):
 
 @router.get("/api/articles/qiita", response_model=article_schema.ArticleListResponse)
 async def get_qiita_trend(
-    created_at: datetime.date = Query(None, description="記事の作成日"),
-    tag: str = Query(None, description="記事のタグ"),
+    created_at: datetime.date = Query(..., description="記事の作成日"),
+    tag: str = Query(..., description="記事のタグ"),
 ):
     """Qiitaの記事から特定のタグと作成日でフィルタされた記事を取得する"""
     try:
