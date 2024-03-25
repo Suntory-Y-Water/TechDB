@@ -4,6 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, Field, constr
 
 from .tag import TagBase
+from pydantic.alias_generators import to_camel
 
 
 class ArticleBase(BaseModel):
@@ -38,3 +39,8 @@ class ArticleResponse(Article):
 
 class ArticleListResponse(BaseModel):
     articles: List[ArticleResponse]
+
+
+class ArticleListClientResponse(BaseModel):
+    articles: List[ArticleResponse]
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)

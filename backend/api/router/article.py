@@ -1,10 +1,12 @@
 import datetime
 import os
+import time
 
 import requests
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from bs4 import BeautifulSoup
 
 import api.cruds.article as article_crud
 import api.schemas.article as article_schema
@@ -22,18 +24,19 @@ async def create_articles(articles_body: article_schema.ArticleCreateRequest, db
     try:
         await article_crud.create_articles_with_tags(db, articles_body.articles)
     except Exception as e:
+        await db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     return None
 
 
-@router.get("/api/articles", response_model=article_schema.ArticleListResponse)
+@router.get("/api/articles", response_model=article_schema.ArticleListClientResponse)
 async def get_articles(db: AsyncSession = Depends(get_db)):
     """全ての記事を取得する"""
     try:
         articles = await article_crud.get_articles(db)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    return article_schema.ArticleListResponse(articles=articles)
+    return article_schema.ArticleListClientResponse(articles=articles)
 
 
 @router.get("/api/articles/qiita", response_model=article_schema.ArticleListResponse)

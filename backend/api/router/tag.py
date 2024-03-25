@@ -8,7 +8,7 @@ from api.db import get_db
 router = APIRouter()
 
 
-@router.get("/api/tag", response_model=tag_schema.TagsList)
+@router.get("/api/tag", response_model=tag_schema.TagsListResponse)
 async def read_all_tags(db: AsyncSession = Depends(get_db)):
     """全てのタグを取得する"""
     tags = await tag_crud.get_all_tags(db)

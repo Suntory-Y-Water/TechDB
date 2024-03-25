@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 from sqlalchemy.dialects.mysql import insert as mysql_insert
-from sqlalchemy.exc import SQLAlchemyError
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import api.models.tag as tag_model
@@ -17,13 +17,10 @@ async def get_all_tags(db: AsyncSession) -> tag_schema.TagsList:
         result = await db.execute(select(tag_model.Tag.tag_id))
         tag_ids = result.scalars().all()
 
-        tag_bases: List[tag_schema.TagBase] = [tag_schema.TagBase(tag_id=tag_id) for tag_id in tag_ids]
-        tags_list = tag_schema.TagsList(tags=tag_bases)
-
-        return tags_list
-    except SQLAlchemyError as e:
-        print(f"タグの取得に失敗しました: {str(e)}")
-        raise
+        tag_list: List[tag_schema.TagBase] = [tag_schema.TagBase(tag_id=tag_id) for tag_id in tag_ids]
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    return tag_schema.TagsList(tags=tag_list)
 
 
 async def create_tags(db: AsyncSession, tags_create: List[tag_schema.TagBase]) -> None:
@@ -34,7 +31,7 @@ async def create_tags(db: AsyncSession, tags_create: List[tag_schema.TagBase]) -
             stmt = stmt.on_duplicate_key_update(updated_at=datetime.now(ZoneInfo("Asia/Tokyo")))
             await db.execute(stmt)
         await db.commit()
-    except SQLAlchemyError as e:
-        print(f"タグの作成または更新に失敗しました: {str(e)}")
+    except Exception as e:
         await db.rollback()
-        raise
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    return None
